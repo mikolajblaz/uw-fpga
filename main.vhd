@@ -32,6 +32,8 @@ end entity demo;
 
 architecture structural of demo is
 	signal rst: std_logic;
+	signal mem_rst: std_logic;
+	signal rstb: std_logic;
 	signal mclk_buf: std_logic;
 	signal khz_clock: std_logic;
 	signal disp_value: std_logic_vector(15 downto 0);
@@ -45,7 +47,6 @@ architecture structural of demo is
 	signal vx: std_logic_vector(7 downto 0);
 	signal vy: std_logic_vector(6 downto 0);
 	signal vblank: std_logic;
-	signal vpixel: std_logic;
 	
 	signal mem_clk: std_logic;
 	
@@ -124,16 +125,18 @@ begin
 		generic map(8, 7)
 		port map(
 			mem_clk => mem_clk,
+			vclk => vclk,
+			mem_rst => mem_rst,
+			rstb => rstb,
 			vx => vx,
 			vy => vy,
 			vblank => vblank,
-			vpixel => vpixel
+			vout => vout
 		);
 	
-	--vout <= (others => '0') when vpixel = '0' else (others => '1');
-	vout <= "11100000" when vpixel = '0' else (others => '1');
-	
 	rst <= btn(3);	
+	rstb <= btn(2);	
+	mem_rst <= btn(1);
 	disp_value <= (others => '1');
 	an <= an_sig;
 		
