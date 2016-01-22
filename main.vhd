@@ -32,8 +32,6 @@ end entity demo;
 
 architecture structural of demo is
 	signal rst: std_logic;
-	signal mem_rst: std_logic;
-	signal rstb: std_logic;
 	signal mclk_buf: std_logic;
 	signal khz_clock: std_logic;
 	signal disp_value: std_logic_vector(15 downto 0);
@@ -45,10 +43,13 @@ architecture structural of demo is
 	signal vclk2: std_logic;    -- clock from unstable 50MHz source
 	signal vclk2_ok: std_logic;
 	signal vx: std_logic_vector(7 downto 0);
-	signal vy: std_logic_vector(6 downto 0);
+	signal vy: std_logic_vector(7 downto 0);
 	signal vblank: std_logic;
+	signal v_rst: std_logic;
 	
+	signal mem_rst: std_logic;
 	signal mem_clk: std_logic;
+	signal mem_init: std_logic;
 	
 	COMPONENT pixclkgen
 	PORT(
@@ -112,22 +113,22 @@ begin
 			rst => rst,
 			blank => vblank,
 			hcount(10) => open,
-			hcount(9 downto 2) => vx,
-			hcount(1 downto 0) => open,
+			hcount(9 downto 1) => vx,
+			hcount(0) => open,
 			HS => hsync,
-			vcount(10 downto 9) => open,
-			vcount(8 downto 2) => vy,
-			vcount(1 downto 0) => open,
+			vcount(10) => open,
+			vcount(9 downto 1) => vy,
+			vcount(0) => open,
 			VS => vsync
 		);
 	
 	display: entity work.display_logic
-		generic map(8, 7)
 		port map(
 			mem_clk => mem_clk,
-			vclk => vclk,
 			mem_rst => mem_rst,
-			rstb => rstb,
+			mem_init => mem_init,
+			v_clk => vclk,
+			v_rst => v_rst,
 			vx => vx,
 			vy => vy,
 			vblank => vblank,
@@ -135,8 +136,10 @@ begin
 		);
 	
 	rst <= btn(3);	
-	rstb <= btn(2);	
+	v_rst <= btn(2);	
 	mem_rst <= btn(1);
+	mem_init <= btn(0);
+	
 	disp_value <= (others => '1');
 	an <= an_sig;
 		
