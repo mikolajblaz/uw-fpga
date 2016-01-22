@@ -112,12 +112,12 @@ begin
 			pixel_clk => vclk,
 			rst => rst,
 			blank => vblank,
-			hcount(10) => open,
-			hcount(9 downto 1) => vx,
+			hcount(10 downto 9) => open,
+			hcount(8 downto 1) => vx,
 			hcount(0) => open,
 			HS => hsync,
-			vcount(10) => open,
-			vcount(9 downto 1) => vy,
+			vcount(10 downto 9) => open,
+			vcount(8 downto 1) => vy,
 			vcount(0) => open,
 			VS => vsync
 		);

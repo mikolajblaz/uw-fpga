@@ -35,20 +35,23 @@ end display_logic;
 
 architecture behavioral of display_logic is
 	signal mem_addra: std_logic_vector(10 downto 0);
-	signal mem_dina: std_logic_vector(0 downto 0);
+	signal mem_dina: std_logic_vector(31 downto 0);
 	signal mem_wea_v: std_logic_vector(0 downto 0);
 	alias mem_wea: std_logic is mem_wea_v(0);
 	
-	signal vpixelb: std_logic_vector(0 downto 0);
-	alias vpixel: std_logic is vpixelb(0);
+	signal vpixel_v: std_logic_vector(0 downto 0);
+	alias vpixel: std_logic is vpixel_v(0);
 	
 	alias x_addra: std_logic_vector(2 downto 0) is mem_addra(2 downto 0);
 	alias y_addra: std_logic_vector(7 downto 0) is mem_addra(10 downto 3);
 	
-	type STATE is (INIT, ACTIVE);
-	signal recv_state: STATE;
+	type STATE_TYPE is (INIT, ACTIVE);
+	signal state: STATE_TYPE;
 	
 	signal cnt: unsigned(31 downto 0);
+	signal do_loop: std_logic;
+	signal curr_x: unsigned(2 downto 0);
+	signal curr_y: unsigned(7 downto 0);
 
 
 	component videomem
@@ -83,21 +86,26 @@ begin
 		 addrb(7 downto 0) => vx,
 		 addrb(15 downto 8) => vy,
 
-		 doutb => vpixel
+		 doutb => vpixel_v
 	  );
-
-	-- TODO split to 2 processes
-	init: process (mem_clk)
+	
+	states: process(mem_clk)
 	begin
 		if rising_edge(mem_clk) then
 			if mem_init = '1' and state = ACTIVE then
 				state <= INIT;
-				cnt <= 0;
-			elsif mem_init = '1' and state = INIT then
-				
-			else
+				cnt <= (others => '0');
+			elsif mem_init = '0' and state = INIT then
 				state <= ACTIVE;
-				mem_dina <= "0";
+			end if;
+		end if;
+	end process;
+
+	init_memory: process(mem_clk)
+	begin
+		if rising_edge(mem_clk) then
+			if state = INIT then
+			
 			end if;
 		end if;
 	end process;
