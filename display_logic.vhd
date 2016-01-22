@@ -33,7 +33,7 @@ entity display_logic is
 			vout: out std_logic_vector(7 downto 0));
 end display_logic;
 
-architecture behavioral of display_logic is
+architecture behavioral of display_logic is	
 	signal mem_addra: std_logic_vector(10 downto 0);
 	signal mem_dina: std_logic_vector(31 downto 0);
 	signal mem_wea_v: std_logic_vector(0 downto 0);
@@ -48,11 +48,12 @@ architecture behavioral of display_logic is
 	type STATE_TYPE is (INIT, ACTIVE);
 	signal state: STATE_TYPE;
 	
-	signal cnt: unsigned(31 downto 0);
+	signal init_counter: unsigned(31 downto 0);
 	signal do_loop: std_logic;
-	signal curr_x: unsigned(2 downto 0);
-	signal curr_y: unsigned(7 downto 0);
-
+	signal x_counter: unsigned(2 downto 0);
+	signal y_counter: unsigned(7 downto 0);
+	constant XMAX: unsigned(2 downto 0) := "111";      -- 7 = (256 / 32) - 1
+	constant YMAX: unsigned(7 downto 0) := "11000000"; -- 192
 
 	component videomem
 	  port (
@@ -89,18 +90,21 @@ begin
 		 doutb => vpixel_v
 	  );
 	
-	states: process(mem_clk)
+	-- change states
+	-- asynchronous reset, TODO: needed?
+	states: process(mem_clk, mem_rst)
 	begin
 		if rising_edge(mem_clk) then
-			if mem_init = '1' and state = ACTIVE then
+			if mem_rst = '1' or (mem_init = '1' and state = ACTIVE) then
 				state <= INIT;
-				cnt <= (others => '0');
+				init_counter <= (others => '0');
 			elsif mem_init = '0' and state = INIT then
 				state <= ACTIVE;
 			end if;
 		end if;
 	end process;
 
+	-- initialize memory
 	init_memory: process(mem_clk)
 	begin
 		if rising_edge(mem_clk) then
@@ -109,6 +113,38 @@ begin
 			end if;
 		end if;
 	end process;
-
+	
+	-- loop horizontally
+	loop_x: process(mem_clk)
+	begin
+		if rising_edge(mem_clk) then
+			if mem_rst = '1' then
+				x_counter <= (others => '0');
+         elsif do_loop = '1' then
+				if x_counter = XMAX then
+					x_counter <= (others => '0');
+				else
+					x_counter <= x_counter + 1;
+				end if;
+			end if;
+		end if;
+	end process;
+	
+	-- loop vartically
+	loop_y: process(mem_clk)
+	begin
+		if rising_edge(mem_clk) then
+			if mem_rst = '1' then
+				y_counter <= (others => '0');
+         elsif do_loop = '1' and x_counter = XMAX then
+				if y_counter = YMAX then
+					y_counter <= (others => '0');
+				else
+					y_counter <= y_counter + 1;
+				end if;
+			end if;
+		end if;
+	end process;
+	
 end behavioral;
 
