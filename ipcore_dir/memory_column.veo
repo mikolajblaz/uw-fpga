@@ -56,10 +56,11 @@ memory_column your_instance_name (
   .douta(douta), // output [31 : 0] douta
   .clkb(clkb), // input clkb
   .rstb(rstb), // input rstb
+  .enb(enb), // input enb
   .web(web), // input [0 : 0] web
-  .addrb(addrb), // input [12 : 0] addrb
-  .dinb(dinb), // input [0 : 0] dinb
-  .doutb(doutb) // output [0 : 0] doutb
+  .addrb(addrb), // input [7 : 0] addrb
+  .dinb(dinb), // input [31 : 0] dinb
+  .doutb(doutb) // output [31 : 0] doutb
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------
 

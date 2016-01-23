@@ -45,6 +45,7 @@ module memory_column(
   douta,
   clkb,
   rstb,
+  enb,
   web,
   addrb,
   dinb,
@@ -59,16 +60,17 @@ input [31 : 0] dina;
 output [31 : 0] douta;
 input clkb;
 input rstb;
+input enb;
 input [0 : 0] web;
-input [12 : 0] addrb;
-input [0 : 0] dinb;
-output [0 : 0] doutb;
+input [7 : 0] addrb;
+input [31 : 0] dinb;
+output [31 : 0] doutb;
 
 // synthesis translate_off
 
   BLK_MEM_GEN_V7_3 #(
     .C_ADDRA_WIDTH(8),
-    .C_ADDRB_WIDTH(13),
+    .C_ADDRB_WIDTH(8),
     .C_ALGORITHM(1),
     .C_AXI_ID_WIDTH(4),
     .C_AXI_SLAVE_TYPE(0),
@@ -82,7 +84,7 @@ output [0 : 0] doutb;
     .C_FAMILY("spartan3"),
     .C_HAS_AXI_ID(0),
     .C_HAS_ENA(0),
-    .C_HAS_ENB(0),
+    .C_HAS_ENB(1),
     .C_HAS_INJECTERR(0),
     .C_HAS_MEM_OUTPUT_REGS_A(0),
     .C_HAS_MEM_OUTPUT_REGS_B(0),
@@ -104,9 +106,9 @@ output [0 : 0] doutb;
     .C_MUX_PIPELINE_STAGES(0),
     .C_PRIM_TYPE(1),
     .C_READ_DEPTH_A(256),
-    .C_READ_DEPTH_B(8192),
+    .C_READ_DEPTH_B(256),
     .C_READ_WIDTH_A(32),
-    .C_READ_WIDTH_B(1),
+    .C_READ_WIDTH_B(32),
     .C_RST_PRIORITY_A("CE"),
     .C_RST_PRIORITY_B("CE"),
     .C_RST_TYPE("SYNC"),
@@ -116,17 +118,17 @@ output [0 : 0] doutb;
     .C_USE_BRAM_BLOCK(0),
     .C_USE_BYTE_WEA(0),
     .C_USE_BYTE_WEB(0),
-    .C_USE_DEFAULT_DATA(0),
+    .C_USE_DEFAULT_DATA(1),
     .C_USE_ECC(0),
     .C_USE_SOFTECC(0),
     .C_WEA_WIDTH(1),
     .C_WEB_WIDTH(1),
     .C_WRITE_DEPTH_A(256),
-    .C_WRITE_DEPTH_B(8192),
+    .C_WRITE_DEPTH_B(256),
     .C_WRITE_MODE_A("WRITE_FIRST"),
     .C_WRITE_MODE_B("WRITE_FIRST"),
     .C_WRITE_WIDTH_A(32),
-    .C_WRITE_WIDTH_B(1),
+    .C_WRITE_WIDTH_B(32),
     .C_XDEVICEFAMILY("spartan3e")
   )
   inst (
@@ -138,13 +140,13 @@ output [0 : 0] doutb;
     .DOUTA(douta),
     .CLKB(clkb),
     .RSTB(rstb),
+    .ENB(enb),
     .WEB(web),
     .ADDRB(addrb),
     .DINB(dinb),
     .DOUTB(doutb),
     .ENA(),
     .REGCEA(),
-    .ENB(),
     .REGCEB(),
     .INJECTSBITERR(),
     .INJECTDBITERR(),

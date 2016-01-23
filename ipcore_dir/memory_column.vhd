@@ -50,10 +50,11 @@ ENTITY memory_column IS
     douta : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
     clkb : IN STD_LOGIC;
     rstb : IN STD_LOGIC;
+    enb : IN STD_LOGIC;
     web : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    addrb : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
-    dinb : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    doutb : OUT STD_LOGIC_VECTOR(0 DOWNTO 0)
+    addrb : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+    dinb : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    doutb : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
   );
 END memory_column;
 
@@ -69,10 +70,11 @@ COMPONENT wrapped_memory_column
     douta : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
     clkb : IN STD_LOGIC;
     rstb : IN STD_LOGIC;
+    enb : IN STD_LOGIC;
     web : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    addrb : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
-    dinb : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    doutb : OUT STD_LOGIC_VECTOR(0 DOWNTO 0)
+    addrb : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+    dinb : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    doutb : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
   );
 END COMPONENT;
 
@@ -80,7 +82,7 @@ END COMPONENT;
   FOR ALL : wrapped_memory_column USE ENTITY XilinxCoreLib.blk_mem_gen_v7_3(behavioral)
     GENERIC MAP (
       c_addra_width => 8,
-      c_addrb_width => 13,
+      c_addrb_width => 8,
       c_algorithm => 1,
       c_axi_id_width => 4,
       c_axi_slave_type => 0,
@@ -94,7 +96,7 @@ END COMPONENT;
       c_family => "spartan3",
       c_has_axi_id => 0,
       c_has_ena => 0,
-      c_has_enb => 0,
+      c_has_enb => 1,
       c_has_injecterr => 0,
       c_has_mem_output_regs_a => 0,
       c_has_mem_output_regs_b => 0,
@@ -116,9 +118,9 @@ END COMPONENT;
       c_mux_pipeline_stages => 0,
       c_prim_type => 1,
       c_read_depth_a => 256,
-      c_read_depth_b => 8192,
+      c_read_depth_b => 256,
       c_read_width_a => 32,
-      c_read_width_b => 1,
+      c_read_width_b => 32,
       c_rst_priority_a => "CE",
       c_rst_priority_b => "CE",
       c_rst_type => "SYNC",
@@ -128,17 +130,17 @@ END COMPONENT;
       c_use_bram_block => 0,
       c_use_byte_wea => 0,
       c_use_byte_web => 0,
-      c_use_default_data => 0,
+      c_use_default_data => 1,
       c_use_ecc => 0,
       c_use_softecc => 0,
       c_wea_width => 1,
       c_web_width => 1,
       c_write_depth_a => 256,
-      c_write_depth_b => 8192,
+      c_write_depth_b => 256,
       c_write_mode_a => "WRITE_FIRST",
       c_write_mode_b => "WRITE_FIRST",
       c_write_width_a => 32,
-      c_write_width_b => 1,
+      c_write_width_b => 32,
       c_xdevicefamily => "spartan3e"
     );
 -- synthesis translate_on
@@ -154,6 +156,7 @@ U0 : wrapped_memory_column
     douta => douta,
     clkb => clkb,
     rstb => rstb,
+    enb => enb,
     web => web,
     addrb => addrb,
     dinb => dinb,
