@@ -25,8 +25,8 @@
 *     (c) Copyright 1995-2016 Xilinx, Inc.                                     *
 *     All rights reserved.                                                     *
 *******************************************************************************/
-// You must compile the wrapper file main_memory.v when simulating
-// the core, main_memory. When compiling the wrapper file, be sure to
+// You must compile the wrapper file memory_column.v when simulating
+// the core, memory_column. When compiling the wrapper file, be sure to
 // reference the XilinxCoreLib Verilog simulation library. For detailed
 // instructions, please refer to the "CORE Generator Help".
 
@@ -36,14 +36,13 @@
 
 `timescale 1ns/1ps
 
-module main_memory(
+module memory_column(
   clka,
   wea,
   addra,
   dina,
   douta,
   clkb,
-  rstb,
   web,
   addrb,
   dinb,
@@ -52,21 +51,20 @@ module main_memory(
 
 input clka;
 input [0 : 0] wea;
-input [10 : 0] addra;
+input [7 : 0] addra;
 input [31 : 0] dina;
 output [31 : 0] douta;
 input clkb;
-input rstb;
 input [0 : 0] web;
-input [15 : 0] addrb;
+input [12 : 0] addrb;
 input [0 : 0] dinb;
 output [0 : 0] doutb;
 
 // synthesis translate_off
 
   BLK_MEM_GEN_V7_3 #(
-    .C_ADDRA_WIDTH(11),
-    .C_ADDRB_WIDTH(16),
+    .C_ADDRA_WIDTH(8),
+    .C_ADDRB_WIDTH(13),
     .C_ALGORITHM(1),
     .C_AXI_ID_WIDTH(4),
     .C_AXI_SLAVE_TYPE(0),
@@ -89,7 +87,7 @@ output [0 : 0] doutb;
     .C_HAS_REGCEA(0),
     .C_HAS_REGCEB(0),
     .C_HAS_RSTA(0),
-    .C_HAS_RSTB(1),
+    .C_HAS_RSTB(0),
     .C_HAS_SOFTECC_INPUT_REGS_A(0),
     .C_HAS_SOFTECC_OUTPUT_REGS_B(0),
     .C_INIT_FILE("BlankString"),
@@ -101,8 +99,8 @@ output [0 : 0] doutb;
     .C_MEM_TYPE(2),
     .C_MUX_PIPELINE_STAGES(0),
     .C_PRIM_TYPE(1),
-    .C_READ_DEPTH_A(1536),
-    .C_READ_DEPTH_B(49152),
+    .C_READ_DEPTH_A(256),
+    .C_READ_DEPTH_B(8192),
     .C_READ_WIDTH_A(32),
     .C_READ_WIDTH_B(1),
     .C_RST_PRIORITY_A("CE"),
@@ -119,8 +117,8 @@ output [0 : 0] doutb;
     .C_USE_SOFTECC(0),
     .C_WEA_WIDTH(1),
     .C_WEB_WIDTH(1),
-    .C_WRITE_DEPTH_A(1536),
-    .C_WRITE_DEPTH_B(49152),
+    .C_WRITE_DEPTH_A(256),
+    .C_WRITE_DEPTH_B(8192),
     .C_WRITE_MODE_A("WRITE_FIRST"),
     .C_WRITE_MODE_B("WRITE_FIRST"),
     .C_WRITE_WIDTH_A(32),
@@ -134,7 +132,6 @@ output [0 : 0] doutb;
     .DINA(dina),
     .DOUTA(douta),
     .CLKB(clkb),
-    .RSTB(rstb),
     .WEB(web),
     .ADDRB(addrb),
     .DINB(dinb),
@@ -142,6 +139,7 @@ output [0 : 0] doutb;
     .RSTA(),
     .ENA(),
     .REGCEA(),
+    .RSTB(),
     .ENB(),
     .REGCEB(),
     .INJECTSBITERR(),
