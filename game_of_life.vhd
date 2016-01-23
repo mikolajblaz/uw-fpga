@@ -54,7 +54,7 @@ package body game_of_life is
 			row_c: in std_logic_vector
 		) return std_logic_vector is
 	begin
-		return row_a;
+		return std_logic_vector(unsigned(row_a) + 1);
 	end perform_step;
 
 ---- Procedure Example

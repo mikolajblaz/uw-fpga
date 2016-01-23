@@ -43,11 +43,13 @@ LIBRARY XilinxCoreLib;
 ENTITY memory_column IS
   PORT (
     clka : IN STD_LOGIC;
+    rsta : IN STD_LOGIC;
     wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
     dina : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     douta : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
     clkb : IN STD_LOGIC;
+    rstb : IN STD_LOGIC;
     web : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     addrb : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
     dinb : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
@@ -60,11 +62,13 @@ ARCHITECTURE memory_column_a OF memory_column IS
 COMPONENT wrapped_memory_column
   PORT (
     clka : IN STD_LOGIC;
+    rsta : IN STD_LOGIC;
     wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
     dina : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     douta : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
     clkb : IN STD_LOGIC;
+    rstb : IN STD_LOGIC;
     web : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     addrb : IN STD_LOGIC_VECTOR(12 DOWNTO 0);
     dinb : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
@@ -98,8 +102,8 @@ END COMPONENT;
       c_has_mux_output_regs_b => 0,
       c_has_regcea => 0,
       c_has_regceb => 0,
-      c_has_rsta => 0,
-      c_has_rstb => 0,
+      c_has_rsta => 1,
+      c_has_rstb => 1,
       c_has_softecc_input_regs_a => 0,
       c_has_softecc_output_regs_b => 0,
       c_init_file => "BlankString",
@@ -143,11 +147,13 @@ BEGIN
 U0 : wrapped_memory_column
   PORT MAP (
     clka => clka,
+    rsta => rsta,
     wea => wea,
     addra => addra,
     dina => dina,
     douta => douta,
     clkb => clkb,
+    rstb => rstb,
     web => web,
     addrb => addrb,
     dinb => dinb,

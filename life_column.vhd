@@ -23,7 +23,8 @@ use ieee.numeric_std.all;
 use work.game_of_life.perform_step;
 
 entity life_column is
-	port (clka : in std_logic;
+	port (rst: in std_logic;
+			clka : in std_logic;
 			trigger: in std_logic;
 			
 			
@@ -38,12 +39,14 @@ architecture behavioral of life_column is
 	component memory_column
 	  port (
 		 clka : in std_logic;
+		 rsta : in std_logic;
 		 wea : in std_logic_vector(0 downto 0);
 		 addra : in std_logic_vector(7 downto 0);
 		 dina : in std_logic_vector(31 downto 0);
 		 douta : out std_logic_vector(31 downto 0);
 		 
 		 clkb : in std_logic;
+		 rstb : in std_logic;
 		 web : in std_logic_vector(0 downto 0);
 		 addrb : in std_logic_vector(12 downto 0);
 		 dinb : in std_logic_vector(0 downto 0);
@@ -56,7 +59,6 @@ architecture behavioral of life_column is
 	
 	signal we: std_logic;
 	signal addra : std_logic_vector(7 downto 0);
-	signal dina : std_logic_vector(31 downto 0);
 	signal douta : std_logic_vector(31 downto 0);
 	
 	signal row_a: std_logic_vector(31 downto 0);
@@ -66,18 +68,21 @@ architecture behavioral of life_column is
 	
 	signal write_phase: std_logic;
 	signal step: unsigned(7 downto 0);
-	signal step_next: unsigned(7 downto 0);
-	constant HEIGHT: unsigned(7 downto 0) := "11111110"; -- 254
+	constant HEIGHT: unsigned(7 downto 0) := "00001110"; -- 254
+	
+	signal clk: std_logic;
 	
 begin
 	mem : memory_column
 	  PORT MAP (
 		 clka => clka,
+		 rsta => rst,
 		 wea(0) => we,
 		 addra => addra,
 		 dina => new_row,
 		 douta => douta,
 		 clkb => clkb,
+		 rstb => rst,
 		 web => "0",
 		 addrb => addrb,
 		 dinb => "0",
@@ -85,16 +90,22 @@ begin
 	  );
 	
 	
+	clk <= not clka;	-- TODO: this is hack needed to deal with RAM latency
+	
 	new_row <= perform_step(row_a, row_b, row_c);
 	
 	we <= write_phase;
 	addra <= std_logic_vector(step) when write_phase = '1' else std_logic_vector(step + 1);
 	
 
-	loop_or_not: process(clka)
+	loop_or_not: process(clk)
 	begin
-		if rising_edge(clka) then
-			if state = IDLE and trigger = '1' then		-- triggered
+		if rising_edge(clk) then
+			if rst = '1' then
+				state <= IDLE;
+				write_phase <= '0';
+				step <= (others => '0');
+			elsif state = IDLE and trigger = '1' then		-- triggered
 				write_phase <= '0';
 				state <= FIRST;
 				step <= (others => '0');
@@ -119,7 +130,6 @@ begin
 						step <= step + 1;
 					end if;
 				end if;
-				
 			end if;
 		end if;
 	end process;

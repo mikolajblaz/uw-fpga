@@ -38,11 +38,13 @@
 
 module memory_column(
   clka,
+  rsta,
   wea,
   addra,
   dina,
   douta,
   clkb,
+  rstb,
   web,
   addrb,
   dinb,
@@ -50,11 +52,13 @@ module memory_column(
 );
 
 input clka;
+input rsta;
 input [0 : 0] wea;
 input [7 : 0] addra;
 input [31 : 0] dina;
 output [31 : 0] douta;
 input clkb;
+input rstb;
 input [0 : 0] web;
 input [12 : 0] addrb;
 input [0 : 0] dinb;
@@ -86,8 +90,8 @@ output [0 : 0] doutb;
     .C_HAS_MUX_OUTPUT_REGS_B(0),
     .C_HAS_REGCEA(0),
     .C_HAS_REGCEB(0),
-    .C_HAS_RSTA(0),
-    .C_HAS_RSTB(0),
+    .C_HAS_RSTA(1),
+    .C_HAS_RSTB(1),
     .C_HAS_SOFTECC_INPUT_REGS_A(0),
     .C_HAS_SOFTECC_OUTPUT_REGS_B(0),
     .C_INIT_FILE("BlankString"),
@@ -127,19 +131,19 @@ output [0 : 0] doutb;
   )
   inst (
     .CLKA(clka),
+    .RSTA(rsta),
     .WEA(wea),
     .ADDRA(addra),
     .DINA(dina),
     .DOUTA(douta),
     .CLKB(clkb),
+    .RSTB(rstb),
     .WEB(web),
     .ADDRB(addrb),
     .DINB(dinb),
     .DOUTB(doutb),
-    .RSTA(),
     .ENA(),
     .REGCEA(),
-    .RSTB(),
     .ENB(),
     .REGCEB(),
     .INJECTSBITERR(),
