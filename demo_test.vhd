@@ -27,10 +27,7 @@
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
- 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+USE ieee.numeric_std.ALL;
  
 ENTITY demo_test IS
 END demo_test;
@@ -72,6 +69,15 @@ ARCHITECTURE behavior OF demo_test IS
    -- Clock period definitions
    constant mclk_period : time := 20 ns;
    constant uclk_period : time := 50 ns;
+	
+	procedure show_mem(signal addrb: out std_logic_vector(7 downto 0)) is
+	begin
+		report "SHOW";
+		for i in 0 to 255 loop
+			addrb <= std_logic_vector(to_unsigned(i, 8));
+			wait for uclk_period*3;
+		end loop;
+	end show_mem;
  
 BEGIN
  
@@ -124,7 +130,7 @@ BEGIN
 		for i in 0 to 20 loop
 			wait for uclk_period*10;
 			btn(0) <= '1';
-			wait for uclk_period*100;
+			wait for uclk_period*1000;
 			btn(0) <= '0';
 			wait for uclk_period*10;
 			btn(1) <= '1';
@@ -134,6 +140,9 @@ BEGIN
 		
 		sw <= "00001101";
 		btn(1) <= '1';
+		
+		wait for uclk_period*100;
+		show_mem(sw);
 		
       wait;
    end process;

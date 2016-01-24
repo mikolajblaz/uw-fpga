@@ -25,12 +25,10 @@
 -- to guarantee that the testbench will bind correctly to the post-implementation 
 -- simulation model.
 --------------------------------------------------------------------------------
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
- 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.game_of_life.live_or_die;
  
 ENTITY life_column_test IS
 END life_column_test;
@@ -57,16 +55,40 @@ ARCHITECTURE behavior OF life_column_test IS
    signal trigger : std_logic := '0';
    signal clkb : std_logic := '0';
    signal addrb : std_logic_vector(7 downto 0) := "00000001";
-	signal enable_b: std_logic := '0';
+	signal enable_b: std_logic := '1';
 
  	--Outputs
    signal doutb : std_logic_vector(31 downto 0);
+	
+	signal input: std_logic_vector(8 downto 0) := "111000000";
+	signal output: std_logic;
 
    -- Clock period definitions
    constant clka_period : time := 10 ns;
    constant clkb_period : time := 10 ns;
+	
+	procedure show_mem(signal addrb: out std_logic_vector(7 downto 0)) is
+	begin
+		report "SHOW";
+		for i in 0 to 255 loop
+			addrb <= std_logic_vector(to_unsigned(i, 8));
+			wait for clka_period*3;
+		end loop;
+	end show_mem;
+	
+	procedure test_rules(inp: in std_logic_vector(8 downto 0); outp: in std_logic;
+								signal input: out std_logic_vector(8 downto 0)) is
+	begin
+		wait for 10ns;
+		input <= inp;
+		wait for 10ns;
+		assert output = outp;
+		wait for 10ns;
+	end test_rules;
  
 BEGIN
+	
+	output <= live_or_die(input);
  
 	-- Instantiate the Unit Under Test (UUT)
    uut: life_column PORT MAP (
@@ -106,11 +128,23 @@ BEGIN
       wait for 100 ns;
       wait for clka_period*10;
 		rst <= '0';
-      -- insert stimulus here 
+      -- insert stimulus here
+	
 		
-		trigger <= '1';
-		wait for clka_period;
-		--trigger <= '0';
+		for i in 0 to 20 loop
+			trigger <= '1';
+			wait for clka_period;
+			trigger <= '0';
+			wait for clka_period * 100;
+			show_mem(addrb);
+		end loop;
+		
+		wait for 1ms;
+		report "RULES";
+		test_rules("111000000", '1', input);
+		test_rules("000000000", '0', input);
+		test_rules("000101110", '0', input);
+		test_rules("000110100", '1', input);
 
       wait;
    end process;

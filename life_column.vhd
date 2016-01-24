@@ -76,9 +76,7 @@ architecture behavioral of life_column is
 	
 	--signal write_phase: std_logic;
 	signal step: unsigned(7 downto 0);
-	constant HEIGHT: unsigned(7 downto 0) := "00001110"; -- 254
-	
-	signal clk: std_logic;
+	constant HEIGHT: unsigned(7 downto 0) := "11111110"; -- 254
 	
 begin
 	mem : memory_column
@@ -98,14 +96,10 @@ begin
 		 doutb => doutb
 	  );
 	
-	
-	--clk <= not clka;	-- TODO: this is hack needed to deal with RAM latency
-	
 	new_row <= perform_step(row_a, row_b, row_c);
 	
 	we <= '1' when write_phase = DO_WRITE else '0';
 	addra <= std_logic_vector(step) when write_phase = DO_WRITE else std_logic_vector(step + 1);
-	
 
 	loop_or_not: process(clka)
 	begin
