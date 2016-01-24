@@ -73,8 +73,8 @@ package body game_of_life is
 						 );
 		ret(0) := live_or_die(
 							row_a(1 downto 0) & ext_right(2) & 
-							row_b(1 downto 0) & ext_left(1) & 
-							row_c(1 downto 0) & ext_left(0)
+							row_b(1 downto 0) & ext_right(1) & 
+							row_c(1 downto 0) & ext_right(0)
 						 );
 		return ret;
 	end perform_step;
