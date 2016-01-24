@@ -40,9 +40,9 @@ package body game_of_life is
 			end if;
 		end loop;
 		if sum = 3 then
-			return env(4);
-		elsif sum = 4 then
 			return '1';
+		elsif sum = 4 then
+			return env(4);
 		else
 			return '0';
 		end if;
@@ -53,8 +53,18 @@ package body game_of_life is
 			row_b: in std_logic_vector;
 			row_c: in std_logic_vector
 		) return std_logic_vector is
+	variable ret: std_logic_vector(31 downto 0);
 	begin
-		return std_logic_vector(unsigned(row_a) + 1);
+		for i in 30 downto 1 loop
+			ret(i) := live_or_die(
+							row_a(i + 1 downto i - 1) &
+							row_b(i + 1 downto i - 1) &
+							row_c(i + 1 downto i - 1)
+						 );
+		end loop;
+		ret(0) := '1';
+		ret(31) := '1';
+		return ret;
 	end perform_step;
 
 ---- Procedure Example
