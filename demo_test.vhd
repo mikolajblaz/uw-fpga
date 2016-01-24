@@ -70,8 +70,8 @@ ARCHITECTURE behavior OF demo_test IS
    signal vout : std_logic_vector(7 downto 0);
 
    -- Clock period definitions
-   constant mclk_period : time := 10 ns;
-   constant uclk_period : time := 10 ns;
+   constant mclk_period : time := 20 ns;
+   constant uclk_period : time := 50 ns;
  
 BEGIN
  
@@ -111,19 +111,29 @@ BEGIN
    stim_proc: process
    begin		
       -- hold reset state for 100 ns.
-      wait for 100 ns;	
+      wait for 100 ns;
+		--reset
+		btn(3) <= '1';
 
-      wait for mclk_period*10;
-		sw <= "00001100";
+      wait for uclk_period*10;
+		btn(3) <= '0';
+		sw <= "00001110";
 
       -- insert stimulus here
 		
 		for i in 0 to 20 loop
-			wait for mclk_period*50;
+			wait for uclk_period*10;
 			btn(0) <= '1';
-			wait for mclk_period*10;
+			wait for uclk_period*100;
 			btn(0) <= '0';
+			wait for uclk_period*10;
+			btn(1) <= '1';
+			wait for uclk_period*10;
+			btn(1) <= '0';
 		end loop;
+		
+		sw <= "00001101";
+		btn(1) <= '1';
 		
       wait;
    end process;

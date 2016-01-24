@@ -34,7 +34,7 @@ architecture simple of demo is
 begin
 	seg <= sw;
 	an <= "1110";
-	life: entity work.life_manager port map(btn(3), mclk, btn(0), led, sw, btn(1));
+	life: entity work.life_manager port map(btn(3), uclk, btn(0), led, sw, btn(1));
 	hsync <= '0';
 	vsync <= '0';
 	vout <= (others => '0');

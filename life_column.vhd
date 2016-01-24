@@ -138,6 +138,7 @@ begin
 					-- writing has just happened
 					if step = HEIGHT then
 						state <= IDLE;
+						step <= (others => '0');
 					else
 						step <= step + 1;
 					end if;

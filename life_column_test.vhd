@@ -102,6 +102,7 @@ BEGIN
    begin		
       -- hold reset state for 100 ns.
 		rst <= '1';
+		addrb <= "00001100";
       wait for 100 ns;
       wait for clka_period*10;
 		rst <= '0';
