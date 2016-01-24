@@ -33,9 +33,12 @@ entity life_column is
 			doutb : out std_logic_vector(31 downto 0);
 			enable_b: in std_logic;
 			
-			-- cells to the left and right in 3 current rows
-			ext_left: in std_logic_vector(2 downto 0);
-			ext_right: in std_logic_vector(2 downto 0)
+			row_a_out: out std_logic_vector(31 downto 0);
+			row_b_out: out std_logic_vector(31 downto 0);
+			row_c_out: out std_logic_vector(31 downto 0);
+			new_row: in std_logic_vector(31 downto 0);
+			
+			will_write: out std_logic
 			);
 end life_column;
 
@@ -76,7 +79,7 @@ architecture behavioral of life_column is
 	signal row_a: std_logic_vector(31 downto 0);
 	signal row_b: std_logic_vector(31 downto 0);
 	signal row_c: std_logic_vector(31 downto 0);
-	signal new_row: std_logic_vector(31 downto 0);
+	--signal new_row: std_logic_vector(31 downto 0);
 	
 	--signal write_phase: std_logic;
 	signal step: unsigned(7 downto 0);
@@ -100,9 +103,12 @@ begin
 		 doutb => doutb
 	  );
 	
-	new_row <= perform_step(row_a, row_b, row_c, ext_left, ext_right);
+	row_a_out <= row_a;
+	row_b_out <= row_b;
+	row_c_out <= row_c;
 	
 	we <= '1' when write_phase = DO_WRITE else '0';
+	will_write <= we;
 	addra <= std_logic_vector(step) when write_phase = DO_WRITE else std_logic_vector(step + 1);
 
 	loop_or_not: process(clka)

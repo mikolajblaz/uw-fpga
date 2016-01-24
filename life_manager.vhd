@@ -20,6 +20,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.game_of_life.perform_step;
 
 entity life_manager is
 	port (rst: in std_logic;
@@ -50,8 +51,27 @@ architecture behavioral of life_manager is
 	
 	signal last_trigger: std_logic;
 	signal true_trigger: std_logic;
-	signal doutb_all: std_logic_vector(31 downto 0);
+	signal doutb_all_1: std_logic_vector(31 downto 0);
 	signal doutb_all_2: std_logic_vector(31 downto 0);
+--	signal doutb_all_3: std_logic_vector(31 downto 0);
+--	signal doutb_all_4: std_logic_vector(31 downto 0);
+	
+	signal ra_1: std_logic_vector(31 downto 0);
+	signal rb_1: std_logic_vector(31 downto 0);
+	signal rc_1: std_logic_vector(31 downto 0);
+	signal ra_2: std_logic_vector(31 downto 0);
+	signal rb_2: std_logic_vector(31 downto 0);
+	signal rc_2: std_logic_vector(31 downto 0);
+	
+	signal ra: std_logic_vector(31 downto 0);
+	signal rb: std_logic_vector(31 downto 0);
+	signal rc: std_logic_vector(31 downto 0);
+	signal ext_left: std_logic_vector(2 downto 0);
+	signal ext_right: std_logic_vector(2 downto 0);
+	
+	signal new_row: std_logic_vector(31 downto 0);
+	
+	signal active_block: std_logic_vector(3 downto 0);
 	
 --	signal init_counter: unsigned(31 downto 0);
 --	signal do_loop: std_logic;
@@ -62,12 +82,33 @@ architecture behavioral of life_manager is
 begin
 --	vout <= (others => '0') when vblank = '1' or vpixel = '0' else (others => '1');
 	
-	block1: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all, enable_b, "000", "111");
-	block2: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_2, enable_b, "111", "000");
-	doutb <= doutb_all(3 downto 0) & doutb_all_2(3 downto 0);
+	block1: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_1, enable_b,
+														  ra_1, rb_1, rc_1, new_row, active_block(3));
+	block2: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_2, enable_b,
+														  ra_2, rb_2, rc_2, new_row, open);
+--	block3: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_3, enable_b);
+--	block4: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_4, enable_b);
+
+	doutb <= doutb_all_1(7 downto 0);-- & doutb_all_2(3 downto 0); -- & doutb_all_3(1 downto 0) & doutb_all_4(1 downto 0);	
+	
+	-- one "life module" for all memory blocks
+	new_row <= perform_step(ra, rb, rc, ext_left, ext_right);
+	ra <= ra_1 when active_block = "1000" else
+			ra_2;-- when active_block = "0100" else
+--			ra_3 when active_block = "0100" else
+--			ra_4;
+
+	rb <= rb_1 when active_block = "1000" else
+			rb_2;
+	
+	rc <= rc_1 when active_block = "1000" else
+			rc_2;
+	
+	ext_left <= "111";
+	ext_right <= "111";
+	active_block(2 downto 0) <= "000";
 	
 	true_trigger <= '1' when trigger = '1' and last_trigger = '0' else '0';
-	
 	tr: process(clk)
 	begin
 		if rising_edge(clk) then
