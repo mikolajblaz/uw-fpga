@@ -5,9 +5,11 @@ use IEEE.NUMERIC_STD.ALL;
 package game_of_life is
 	function live_or_die(env: in std_logic_vector(8 downto 0)) return std_logic;
 	function perform_step(
-			row_a: in std_logic_vector;
-			row_b: in std_logic_vector;
-			row_c: in std_logic_vector
+			row_a: in std_logic_vector(31 downto 0);
+			row_b: in std_logic_vector(31 downto 0);
+			row_c: in std_logic_vector(31 downto 0);
+			ext_left: in std_logic_vector(2 downto 0);
+			ext_right: in std_logic_vector(2 downto 0)
 		) return std_logic_vector;
 
 -- type <new_type> is
@@ -49,9 +51,11 @@ package body game_of_life is
 	end live_or_die;
 	
 	function perform_step(
-			row_a: in std_logic_vector;
-			row_b: in std_logic_vector;
-			row_c: in std_logic_vector
+			row_a: in std_logic_vector(31 downto 0);
+			row_b: in std_logic_vector(31 downto 0);
+			row_c: in std_logic_vector(31 downto 0);
+			ext_left: in std_logic_vector(2 downto 0);
+			ext_right: in std_logic_vector(2 downto 0)
 		) return std_logic_vector is
 	variable ret: std_logic_vector(31 downto 0);
 	begin
@@ -62,8 +66,16 @@ package body game_of_life is
 							row_c(i + 1 downto i - 1)
 						 );
 		end loop;
-		ret(0) := '1';
-		ret(31) := '1';
+		ret(31) := live_or_die(
+							ext_left(2) & row_a(31 downto 30) &
+							ext_left(1) & row_b(31 downto 30) &
+							ext_left(0) & row_c(31 downto 30)
+						 );
+		ret(0) := live_or_die(
+							row_a(1 downto 0) & ext_right(2) & 
+							row_b(1 downto 0) & ext_left(1) & 
+							row_c(1 downto 0) & ext_left(0)
+						 );
 		return ret;
 	end perform_step;
 

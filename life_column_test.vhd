@@ -44,7 +44,11 @@ ARCHITECTURE behavior OF life_column_test IS
          clkb : IN  std_logic;
          addrb : IN  std_logic_vector(7 downto 0);
          doutb : OUT  std_logic_vector(31 downto 0);
-			enable_b: in std_logic
+			enable_b: in std_logic;
+			
+			-- cells to the left and right in 3 current rows
+			ext_left: in std_logic_vector(2 downto 0);
+			ext_right: in std_logic_vector(2 downto 0)
         );
     END COMPONENT;
     
@@ -56,6 +60,9 @@ ARCHITECTURE behavior OF life_column_test IS
    signal clkb : std_logic := '0';
    signal addrb : std_logic_vector(7 downto 0) := "00000001";
 	signal enable_b: std_logic := '1';
+	-- cells to the left and right in 3 current rows
+	signal ext_left: std_logic_vector(2 downto 0) := "000";
+	signal ext_right: std_logic_vector(2 downto 0) := "000";
 
  	--Outputs
    signal doutb : std_logic_vector(31 downto 0);
@@ -98,7 +105,9 @@ BEGIN
           clkb => clkb,
           addrb => addrb,
           doutb => doutb,
-			 enable_b => enable_b
+			 enable_b => enable_b,
+			 ext_left => ext_left,
+			 ext_right => ext_right
         );
 
    -- Clock process definitions

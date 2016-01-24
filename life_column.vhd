@@ -31,7 +31,11 @@ entity life_column is
 			clkb : in std_logic;
 			addrb : in std_logic_vector(7 downto 0);
 			doutb : out std_logic_vector(31 downto 0);
-			enable_b: in std_logic
+			enable_b: in std_logic;
+			
+			-- cells to the left and right in 3 current rows
+			ext_left: in std_logic_vector(2 downto 0);
+			ext_right: in std_logic_vector(2 downto 0)
 			);
 end life_column;
 
@@ -96,7 +100,7 @@ begin
 		 doutb => doutb
 	  );
 	
-	new_row <= perform_step(row_a, row_b, row_c);
+	new_row <= perform_step(row_a, row_b, row_c, ext_left, ext_right);
 	
 	we <= '1' when write_phase = DO_WRITE else '0';
 	addra <= std_logic_vector(step) when write_phase = DO_WRITE else std_logic_vector(step + 1);
