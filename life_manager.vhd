@@ -61,7 +61,7 @@ architecture behavioral of life_manager is
 begin
 --	vout <= (others => '0') when vblank = '1' or vpixel = '0' else (others => '1');
 	
-	block1: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all, enable_b);
+	block1: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all, enable_b, "111", "111");
 	doutb <= doutb_all(7 downto 0);
 	
 	true_trigger <= '1' when trigger = '1' and last_trigger = '0' else '0';
