@@ -51,6 +51,7 @@ architecture behavioral of life_manager is
 	signal last_trigger: std_logic;
 	signal true_trigger: std_logic;
 	signal doutb_all: std_logic_vector(31 downto 0);
+	signal doutb_all_2: std_logic_vector(31 downto 0);
 	
 --	signal init_counter: unsigned(31 downto 0);
 --	signal do_loop: std_logic;
@@ -61,8 +62,9 @@ architecture behavioral of life_manager is
 begin
 --	vout <= (others => '0') when vblank = '1' or vpixel = '0' else (others => '1');
 	
-	block1: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all, enable_b, "111", "111");
-	doutb <= doutb_all(7 downto 0);
+	block1: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all, enable_b, "000", "111");
+	block2: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_2, enable_b, "111", "000");
+	doutb <= doutb_all(3 downto 0) & doutb_all_2(3 downto 0);
 	
 	true_trigger <= '1' when trigger = '1' and last_trigger = '0' else '0';
 	
