@@ -68,7 +68,7 @@ architecture behavioral of life_column is
 	attribute syn_black_box of memory_column: component is true;
 	
 	type STATE_TYPE is (IDLE, FIRST, LOOPING);
-	type WRITE_PHASE_TYPE is (READ_DELAY, DO_READ, DO_WRITE);
+	type WRITE_PHASE_TYPE is (READ_DELAY, DO_READ, WRITE_DELAY, DO_WRITE);
 	signal state: STATE_TYPE;
 	signal write_phase: WRITE_PHASE_TYPE;
 	
@@ -132,11 +132,13 @@ begin
 				if write_phase = READ_DELAY then
 					write_phase <= DO_READ;
 				elsif write_phase = DO_READ then			-- set addresses
-					write_phase <= DO_WRITE;
+					write_phase <= WRITE_DELAY;
 					row_a <= row_b;
 					row_b <= row_c;
 					-- reading is happening now
-					row_c <= douta;					
+					row_c <= douta;
+				elsif write_phase = WRITE_DELAY then
+					write_phase <= DO_WRITE;
 				elsif write_phase = DO_WRITE then	-- write phase
 					write_phase <= READ_DELAY;
 					-- writing has just happened

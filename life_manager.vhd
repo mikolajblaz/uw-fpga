@@ -50,11 +50,13 @@ architecture behavioral of life_manager is
 	signal state: STATE_TYPE;
 	
 	signal last_trigger: std_logic;
-	signal true_trigger: std_logic;
+	signal true_triggers: std_logic_vector(3 downto 0);
+	signal active_block: std_logic_vector(3 downto 0);
+	
 	signal doutb_all_1: std_logic_vector(31 downto 0);
 	signal doutb_all_2: std_logic_vector(31 downto 0);
---	signal doutb_all_3: std_logic_vector(31 downto 0);
---	signal doutb_all_4: std_logic_vector(31 downto 0);
+	signal doutb_all_3: std_logic_vector(31 downto 0);
+	signal doutb_all_4: std_logic_vector(31 downto 0);
 	
 	signal ra_1: std_logic_vector(31 downto 0);
 	signal rb_1: std_logic_vector(31 downto 0);
@@ -62,6 +64,12 @@ architecture behavioral of life_manager is
 	signal ra_2: std_logic_vector(31 downto 0);
 	signal rb_2: std_logic_vector(31 downto 0);
 	signal rc_2: std_logic_vector(31 downto 0);
+	signal ra_3: std_logic_vector(31 downto 0);
+	signal rb_3: std_logic_vector(31 downto 0);
+	signal rc_3: std_logic_vector(31 downto 0);
+	signal ra_4: std_logic_vector(31 downto 0);
+	signal rb_4: std_logic_vector(31 downto 0);
+	signal rc_4: std_logic_vector(31 downto 0);
 	
 	signal ra: std_logic_vector(31 downto 0);
 	signal rb: std_logic_vector(31 downto 0);
@@ -70,8 +78,6 @@ architecture behavioral of life_manager is
 	signal ext_right: std_logic_vector(2 downto 0);
 	
 	signal new_row: std_logic_vector(31 downto 0);
-	
-	signal active_block: std_logic_vector(3 downto 0);
 	
 --	signal init_counter: unsigned(31 downto 0);
 --	signal do_loop: std_logic;
@@ -82,66 +88,53 @@ architecture behavioral of life_manager is
 begin
 --	vout <= (others => '0') when vblank = '1' or vpixel = '0' else (others => '1');
 	
-	block1: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_1, enable_b,
+	block1: entity work.life_column port map(rst, clk, true_triggers(3), clk, addrb, doutb_all_1, enable_b,
 														  ra_1, rb_1, rc_1, new_row, active_block(3));
-	block2: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_2, enable_b,
-														  ra_2, rb_2, rc_2, new_row, open);
+	block2: entity work.life_column port map(rst, clk, true_triggers(2), clk, addrb, doutb_all_2, enable_b,
+														  ra_2, rb_2, rc_2, new_row, active_block(2));
+	block3: entity work.life_column port map(rst, clk, true_triggers(1), clk, addrb, doutb_all_3, enable_b,
+														  ra_3, rb_3, rc_3, new_row, active_block(1));
+	block4: entity work.life_column port map(rst, clk, true_triggers(0), clk, addrb, doutb_all_4, enable_b,
+														  ra_4, rb_4, rc_4, new_row, active_block(0));
 --	block3: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_3, enable_b);
 --	block4: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_4, enable_b);
 
-	doutb <= doutb_all_1(7 downto 0);-- & doutb_all_2(3 downto 0); -- & doutb_all_3(1 downto 0) & doutb_all_4(1 downto 0);	
+	doutb <= doutb_all_1(1 downto 0) & doutb_all_2(1 downto 0) & doutb_all_3(1 downto 0) & doutb_all_4(1 downto 0);	
 	
 	-- one "life module" for all memory blocks
 	new_row <= perform_step(ra, rb, rc, ext_left, ext_right);
 	ra <= ra_1 when active_block = "1000" else
-			ra_2;-- when active_block = "0100" else
---			ra_3 when active_block = "0100" else
---			ra_4;
+			ra_2 when active_block = "0100" else
+			ra_3 when active_block = "0010" else
+			ra_4;
 
 	rb <= rb_1 when active_block = "1000" else
-			rb_2;
+			rb_2 when active_block = "0100" else
+			rb_3 when active_block = "0010" else
+			rb_4;
 	
 	rc <= rc_1 when active_block = "1000" else
-			rc_2;
+			rc_2 when active_block = "0100" else
+			rc_3 when active_block = "0010" else
+			rc_4;
 	
-	ext_left <= "111";
-	ext_right <= "111";
-	active_block(2 downto 0) <= "000";
+	ext_left <= "111" when active_block = "1000" else "000";
+	ext_right <= "000" when active_block = "1000" else "111";
 	
-	true_trigger <= '1' when trigger = '1' and last_trigger = '0' else '0';
-	tr: process(clk)
+	-- Trigger all block sequentially
+	triggers: process(clk, rst)
 	begin
-		if rising_edge(clk) then
+		if rst = '1' then
+			last_trigger <= '0';
+			true_triggers <= (others => '0');
+		elsif rising_edge(clk) then
 			last_trigger <= trigger;
+			if trigger = '1' and last_trigger = '0' then
+				true_triggers <= "1000";
+			else
+				true_triggers <= '0' & true_triggers(3 downto 1);	-- shift right
+			end if;
 		end if;
 	end process;
-	
-	-- change states
-	-- asynchronous reset, TODO: needed?
---	states: process(clk)
---	begin
---		if rising_edge(clk) then
---			if mem_rst = '1' then
---				state <= INIT;
---				init_counter <= (others => '0');
---				-- TODO
---			elsif mem_init = '1' and state = ACTIVE then
---				state <= INIT;
---				init_counter <= (others => '0');
---			elsif mem_init = '0' and state = INIT then
---				state <= ACTIVE;
---			end if;
---		end if;
---	end process;
-
-	-- initialize memory
---	init_memory: process(clk)
---	begin
---		if rising_edge(clk) then
---			if state = INIT then
---			
---			end if;
---		end if;
---	end process;	
 end behavioral;
 
