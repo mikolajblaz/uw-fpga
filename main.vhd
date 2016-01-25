@@ -59,7 +59,7 @@ architecture simple of demo is
 begin
 	seg <= sw;
 	an <= "1110";
-	life: entity work.life_manager port map(rst, vclk, trigger, led, vx, '1');
+	life: entity work.life_manager port map(rst, uclk, vclk, trigger, led, vx, '1');
 	vout <= (others => '0');
 	
 	rst <= btn(3);
