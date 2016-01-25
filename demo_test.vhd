@@ -69,6 +69,7 @@ ARCHITECTURE behavior OF demo_test IS
    -- Clock period definitions
    constant mclk_period : time := 20 ns;
    constant uclk_period : time := 50 ns;
+	constant vga_period  : time := 16 ms;
 	
 	procedure show_mem(signal addrb: out std_logic_vector(7 downto 0)) is
 	begin
@@ -124,11 +125,13 @@ BEGIN
       wait for uclk_period*10;
 		btn(3) <= '0';
 		wait for 1us;
-		sw <= "10000000";
+		
+		report "READ VGA";
+		wait for vga_period - 1.1 ms;
 
       -- insert stimulus here
 		
-		for i in 0 to 100 loop
+		for i in 0 to 4 loop
 			wait for uclk_period*10;
 			btn(0) <= '1';
 			wait for uclk_period*1000;
@@ -139,8 +142,10 @@ BEGIN
 			btn(1) <= '0';
 		end loop;
 		
+		report "READ VGA";
+		wait for vga_period;
+		
 		sw <= "00001101";
-		btn(1) <= '1';
 		
 		wait for uclk_period*100;
 		show_mem(sw);

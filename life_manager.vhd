@@ -140,11 +140,12 @@ begin
 	-- DISPLAY
 	vout <= (others => '0') when vblank = '1' or vpixel = '0' else (others => '1');
 	
+	-- The view is mirrored!
 	addrb <= vx & vy(4 downto 0);
-	doutb <= doutb_all_1 when block_idx = "00" else
-				doutb_all_2 when block_idx = "01" else
-				doutb_all_3 when block_idx = "10" else
-				doutb_all_4;	-- "11"
+	doutb <= doutb_all_4 when block_idx = "00" else
+				doutb_all_3 when block_idx = "01" else
+				doutb_all_2 when block_idx = "10" else
+				doutb_all_1;	-- "11"
 	
 	
 end behavioral;

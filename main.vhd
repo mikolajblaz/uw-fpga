@@ -58,9 +58,9 @@ architecture simple of demo is
 	signal d2: std_logic;
 begin
 	seg <= sw;
+	led <= sw;
 	an <= "1110";
-	life: entity work.life_manager port map(rst, uclk_buf, trigger, vclk, vx, vy, vblank, led);
-	vout <= (others => '0');
+	life: entity work.life_manager port map(rst, uclk_buf, trigger, vclk, vx, vy, vblank, vout);
 	
 	rst <= btn(3);
 	trigger <= btn(0);
