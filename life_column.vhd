@@ -118,6 +118,9 @@ begin
 				state <= IDLE;
 				write_phase <= READ_DELAY;
 				step <= (others => '0');
+				row_a <= (others => '0');
+				row_b <= (others => '0');
+				row_c <= (others => '0');
 			elsif state = IDLE and trigger = '1' then		-- triggered
 				write_phase <= READ_DELAY;
 				state <= FIRST;

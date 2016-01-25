@@ -7,11 +7,11 @@
 -- \   \   \/     Version : 14.7
 --  \   \         Application : xaw2vhdl
 --  /   /         Filename : pixclkgen.vhd
--- /___/   /\     Timestamp : 01/19/2016 15:07:33
+-- /___/   /\     Timestamp : 01/25/2016 00:43:15
 -- \   \  /  \ 
 --  \___\/\___\ 
 --
---Command: xaw2vhdl-st C:\Users\mb346862\Documents\PULlab\zadanie4\ipcore_dir\.\pixclkgen.xaw C:\Users\mb346862\Documents\PULlab\zadanie4\ipcore_dir\.\pixclkgen
+--Command: xaw2vhdl-st F:\Xilinx\PULlab\zadanie4\ipcore_dir\.\pixclkgen.xaw F:\Xilinx\PULlab\zadanie4\ipcore_dir\.\pixclkgen
 --Design Name: pixclkgen
 --Device: xc3s100e-5cp132
 --

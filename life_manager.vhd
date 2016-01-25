@@ -118,8 +118,15 @@ begin
 			rc_3 when active_block = "0010" else
 			rc_4;
 	
-	ext_left <= "111" when active_block = "1000" else "000";
-	ext_right <= "000" when active_block = "1000" else "111";
+	ext_left <= "111" when active_block = "1000" else
+					ra_1(0) & rb_1(0) & rc_1(0) when active_block = "0100" else
+					ra_2(0) & rb_2(0) & rc_2(0) when active_block = "0010" else
+					ra_3(0) & rb_3(0) & rc_3(0);
+	
+	ext_right <= ra_2(31) & rb_2(31) & rc_2(31) when active_block = "1000" else
+					 ra_3(31) & rb_3(31) & rc_3(31) when active_block = "0100" else
+					 ra_4(31) & rb_4(31) & rc_4(31) when active_block = "0010" else
+					 "111";
 	
 	-- Trigger all block sequentially
 	triggers: process(clk, rst)

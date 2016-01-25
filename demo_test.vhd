@@ -123,11 +123,12 @@ BEGIN
 
       wait for uclk_period*10;
 		btn(3) <= '0';
-		sw <= "00001110";
+		wait for 1us;
+		sw <= "10000000";
 
       -- insert stimulus here
 		
-		for i in 0 to 20 loop
+		for i in 0 to 100 loop
 			wait for uclk_period*10;
 			btn(0) <= '1';
 			wait for uclk_period*1000;

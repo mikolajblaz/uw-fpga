@@ -31,13 +31,63 @@ entity demo is
 end entity demo;
 
 architecture simple of demo is
+	signal rst: std_logic;
+	signal trigger: std_logic;
+	signal uclk_buf: std_logic;
+	signal lock: std_logic;
+
+	signal vclk: std_logic;  -- stable
+	signal vx: std_logic_vector(7 downto 0);
+	signal vy: std_logic_vector(7 downto 0);
+	signal vblank: std_logic;
+	signal v_rst: std_logic;
+
+	COMPONENT pixclkgen
+	PORT(
+		CLKIN_IN : IN std_logic;
+		RST_IN : IN std_logic;          
+		CLKFX_OUT : OUT std_logic;
+		CLKIN_IBUFG_OUT : OUT std_logic;
+		LOCKED_OUT : OUT std_logic
+		);
+	END COMPONENT;
+	
+	signal dummy_1: std_logic_vector(1 downto 0);
+	signal dummy_2: std_logic_vector(1 downto 0);
+	signal d1: std_logic;
+	signal d2: std_logic;
 begin
 	seg <= sw;
 	an <= "1110";
-	life: entity work.life_manager port map(btn(3), uclk, btn(0), led, sw, btn(1));
-	hsync <= '0';
-	vsync <= '0';
+	life: entity work.life_manager port map(rst, vclk, trigger, led, vx, '1');
 	vout <= (others => '0');
+	
+	rst <= btn(3);
+	trigger <= btn(0);
+	
+	pixclkgen1: pixclkgen
+	port map(
+		clkin_in => uclk,
+		rst_in => rst,
+		clkfx_out => vclk,
+		clkin_ibufg_out => uclk_buf,
+		locked_out => lock
+	);
+	
+	vga : entity work.vga_controller_640_60
+	port map (
+		pixel_clk => vclk,
+		rst => rst,
+		blank => vblank,
+		hcount(10 downto 9) => dummy_1,
+		hcount(8 downto 1) => vx,
+		hcount(0) => d1,
+		HS => hsync,
+		vcount(10 downto 9) => dummy_2,
+		vcount(8 downto 1) => vy,
+		vcount(0) => d2,
+		VS => vsync
+	);
 end simple;
 
 --architecture structural of demo is
