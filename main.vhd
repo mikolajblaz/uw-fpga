@@ -38,7 +38,7 @@ architecture simple of demo is
 
 	signal vclk: std_logic;  -- stable
 	signal vx: std_logic_vector(7 downto 0);
-	signal vy: std_logic_vector(7 downto 0);
+	signal vy: std_logic_vector(6 downto 0);
 	signal vblank: std_logic;
 	signal v_rst: std_logic;
 
@@ -53,13 +53,13 @@ architecture simple of demo is
 	END COMPONENT;
 	
 	signal dummy_1: std_logic_vector(1 downto 0);
-	signal dummy_2: std_logic_vector(1 downto 0);
+	signal dummy_2: std_logic_vector(2 downto 0);
 	signal d1: std_logic;
 	signal d2: std_logic;
 begin
 	seg <= sw;
 	an <= "1110";
-	life: entity work.life_manager port map(rst, uclk, vclk, trigger, led, vx, '1');
+	life: entity work.life_manager port map(rst, uclk_buf, trigger, vclk, vx, vy, vblank, led);
 	vout <= (others => '0');
 	
 	rst <= btn(3);
@@ -83,8 +83,8 @@ begin
 		hcount(8 downto 1) => vx,
 		hcount(0) => d1,
 		HS => hsync,
-		vcount(10 downto 9) => dummy_2,
-		vcount(8 downto 1) => vy,
+		vcount(10 downto 8) => dummy_2,
+		vcount(7 downto 1) => vy,
 		vcount(0) => d2,
 		VS => vsync
 	);

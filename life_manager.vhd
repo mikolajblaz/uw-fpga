@@ -30,7 +30,7 @@ entity life_manager is
 			
 			vclk: in std_logic;
 			vx: in std_logic_vector(7 downto 0);
-			vy: in std_logic_vector(7 downto 0);
+			vy: in std_logic_vector(6 downto 0);
 			vblank: in std_logic;
 			vout: out std_logic_vector(7 downto 0)
 			);
@@ -69,27 +69,27 @@ architecture behavioral of life_manager is
 	
 	-- DISPLAY
 	alias block_idx: std_logic_vector(1 downto 0) is vy(6 downto 5);
-	signal addrb: std_logic_vector(7 downto 0);
-	signal doutb: std_logic_vector(31 downto 0);
+	signal addrb: std_logic_vector(12 downto 0);
+	signal doutb: std_logic_vector(0 downto 0);
 	
-	signal doutb_all_1: std_logic_vector(31 downto 0);
-	signal doutb_all_2: std_logic_vector(31 downto 0);
-	signal doutb_all_3: std_logic_vector(31 downto 0);
-	signal doutb_all_4: std_logic_vector(31 downto 0);
+	signal doutb_all_1: std_logic_vector(0 downto 0);
+	signal doutb_all_2: std_logic_vector(0 downto 0);
+	signal doutb_all_3: std_logic_vector(0 downto 0);
+	signal doutb_all_4: std_logic_vector(0 downto 0);
 	
 	alias vpixel: std_logic is doutb(0);
 
 begin
-	block1: entity work.life_column port map(rst, clk, true_triggers(3), vclk, addrb, doutb_all_1, enable_b,
+	block1: entity work.life_column port map(rst, clk, true_triggers(3), vclk, addrb, doutb_all_1,
 														  ra_1, rb_1, rc_1, new_row, active_block(3));
-	block2: entity work.life_column port map(rst, clk, true_triggers(2), vclk, addrb, doutb_all_2, enable_b,
+	block2: entity work.life_column port map(rst, clk, true_triggers(2), vclk, addrb, doutb_all_2,
 														  ra_2, rb_2, rc_2, new_row, active_block(2));
-	block3: entity work.life_column port map(rst, clk, true_triggers(1), vclk, addrb, doutb_all_3, enable_b,
+	block3: entity work.life_column port map(rst, clk, true_triggers(1), vclk, addrb, doutb_all_3,
 														  ra_3, rb_3, rc_3, new_row, active_block(1));
-	block4: entity work.life_column port map(rst, clk, true_triggers(0), vclk, addrb, doutb_all_4, enable_b,
+	block4: entity work.life_column port map(rst, clk, true_triggers(0), vclk, addrb, doutb_all_4,
 														  ra_4, rb_4, rc_4, new_row, active_block(0));
---	block3: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_3, enable_b);
---	block4: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_4, enable_b);
+--	block3: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_3);
+--	block4: entity work.life_column port map(rst, clk, true_trigger, clk, addrb, doutb_all_4);
 
 --	doutb <= doutb_all_1(1 downto 0) & doutb_all_2(1 downto 0) & doutb_all_3(1 downto 0) & doutb_all_4(1 downto 0);	
 	

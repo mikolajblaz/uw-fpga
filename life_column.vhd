@@ -29,9 +29,8 @@ entity life_column is
 			
 			
 			clkb : in std_logic;
-			addrb : in std_logic_vector(7 downto 0);
-			doutb : out std_logic_vector(31 downto 0);
-			enable_b: in std_logic;
+			addrb : in std_logic_vector(12 downto 0);
+			doutb : out std_logic_vector(0 downto 0);
 			
 			row_a_out: out std_logic_vector(31 downto 0);
 			row_b_out: out std_logic_vector(31 downto 0);
@@ -47,19 +46,16 @@ architecture behavioral of life_column is
 	component memory_column
 	  port (
 		 clka : in std_logic;
-		 rsta : in std_logic;
 		 wea : in std_logic_vector(0 downto 0);
 		 addra : in std_logic_vector(7 downto 0);
 		 dina : in std_logic_vector(31 downto 0);
 		 douta : out std_logic_vector(31 downto 0);
 		 
 		 clkb : in std_logic;
-		 rstb : in std_logic;
-		 enb : IN STD_LOGIC;
 		 web : in std_logic_vector(0 downto 0);
-		 addrb : in std_logic_vector(7 downto 0);
-		 dinb : in std_logic_vector(31 downto 0);
-		 doutb : out std_logic_vector(31 downto 0)
+		 addrb : in std_logic_vector(12 downto 0);
+		 dinb : in std_logic_vector(0 downto 0);
+		 doutb : out std_logic_vector(0 downto 0)
 	  );
 	end component;
 	
@@ -89,14 +85,11 @@ begin
 	mem : memory_column
 	  PORT MAP (
 		 clka => clka,
-		 rsta => rst,
 		 wea(0) => we,
 		 addra => addra,
 		 dina => new_row,
 		 douta => douta,
 		 clkb => clkb,
-		 rstb => rst,
-		 enb => enable_b,
 		 web => "0",
 		 addrb => addrb,
 		 dinb => (others => '0'),
